@@ -399,3 +399,17 @@ under the License.
 [DistributedCache]: http://hadoop.apache.org/docs/stable/api/org/apache/hadoop/filecache/DistributedCache.html
 [Cascading]: http://www.cascading.org/
 [Tap]: http://docs.cascading.org/cascading/2.1/userguide/html/ch03s05.html
+
+Elasticsearch-hadoop 5.5.1 修改记录  
+====================
+
+|序号|项目|类|方法|行号|修改说明| 
+|---|---|---|---|---|---|  
+|201708-14|-|build.gradle|-|579|增加elasticsearch-sql5|
+|201708-14|-|gradle.properties|-|15|修改hive的版本到2.2.0-SNAPSHOT|
+|201708-14|hive|EsPredicateAnalyzer.java|-|-|增加处理es过滤条件部分|
+|201708-14|hive|EsPredicateDecomposer.java|-|-|增加处理es过滤条件部分|
+|201708-14|hive|IndexSearchCondition.java|-|-|增加处理es过滤条件部分|
+|201708-14|hive|EsHiveInputFormat.java|getRecordReader|133|增加es查询语句|
+|201708-14|mr|InitalizationUtils.java|discoverEsVersion|276|每次都获取es版本号|
+|201708-14|mr|RestRepository.java|scroll|363|打印dsl语句|

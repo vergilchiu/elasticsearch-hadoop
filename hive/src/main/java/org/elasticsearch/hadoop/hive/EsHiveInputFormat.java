@@ -21,10 +21,15 @@ package org.elasticsearch.hadoop.hive;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.ql.exec.SerializationUtilities;
+import org.apache.hadoop.hive.ql.plan.ExprNodeGenericFuncDesc;
+import org.apache.hadoop.hive.ql.plan.TableScanDesc;
+import org.apache.hadoop.hive.serde.serdeConstants;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.Writable;
 import org.apache.hadoop.mapred.FileInputFormat;
@@ -32,9 +37,11 @@ import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapred.InputSplit;
 import org.apache.hadoop.mapred.JobConf;
 import org.apache.hadoop.mapred.Reporter;
+import org.elasticsearch.hadoop.cfg.ConfigurationOptions;
 import org.elasticsearch.hadoop.cfg.HadoopSettingsManager;
 import org.elasticsearch.hadoop.cfg.InternalConfigurationOptions;
 import org.elasticsearch.hadoop.cfg.Settings;
+import org.elasticsearch.hadoop.hive.pdd.EsPredicateDecomposer;
 import org.elasticsearch.hadoop.mr.EsInputFormat;
 import org.elasticsearch.hadoop.rest.InitializationUtils;
 import org.elasticsearch.hadoop.util.StringUtils;
@@ -124,6 +131,18 @@ public class EsHiveInputFormat extends EsInputFormat<Text, Writable> {
     @Override
     public AbstractWritableEsInputRecordReader getRecordReader(InputSplit split, JobConf job, Reporter reporter) {
         InputSplit delegate = ((EsHiveSplit) split).delegate;
+        //added by zhaowei 20170814 增加es查询条件
+        String filterExprSerialized = job.get(TableScanDesc.FILTER_EXPR_CONF_STR);
+        if (filterExprSerialized != null) {
+            ExprNodeGenericFuncDesc filterExpr =
+            		SerializationUtilities.deserializeExpression(filterExprSerialized);
+            EsPredicateDecomposer decomposer = EsPredicateDecomposer.create(Arrays.asList(job.get(serdeConstants.LIST_COLUMNS).split(",")));
+            decomposer.decomposePredicate(filterExpr);
+            String query = decomposer.getQuery();
+            if(org.apache.commons.lang3.StringUtils.isNotBlank(query)){
+                job.set(ConfigurationOptions.ES_QUERY, query);
+            }
+        }
         return isOutputAsJson(job) ? new JsonWritableEsInputRecordReader(delegate, job, reporter) : new WritableEsInputRecordReader(delegate, job, reporter);
     }
 }

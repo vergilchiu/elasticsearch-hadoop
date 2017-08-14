@@ -273,6 +273,8 @@ public abstract class InitializationUtils {
 
     public static EsMajorVersion discoverEsVersion(Settings settings, Log log) {
         String version = settings.getProperty(InternalConfigurationOptions.INTERNAL_ES_VERSION);
+        //added by zhaowei 20170814 每次都获取版本号
+        version=null;
         if (StringUtils.hasText(version)) {
             if (log.isDebugEnabled()) {
                 log.debug(String.format("Elasticsearch version [%s] already present in configuration; skipping discovery", version));

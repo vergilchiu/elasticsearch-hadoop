@@ -576,6 +576,7 @@ project(":elasticsearch-hadoop-hive") {
     nestMRProject(project)
     
     dependencies {
+        compile group: 'org.nlpcn', name: 'elasticsearch-sql', version: '5.1.2.0'
         provided("org.apache.hive:hive-service:$hiveVersion") {
             exclude module: "log4j-slf4j-impl"
         }

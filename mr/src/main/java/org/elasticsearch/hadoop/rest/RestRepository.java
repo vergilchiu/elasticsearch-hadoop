@@ -360,6 +360,9 @@ public class RestRepository implements Closeable, StatsAware {
 
     // used to initialize a scroll (based on a query)
     Scroll scroll(String query, BytesArray body, ScrollReader reader) throws IOException {
+    	//added by zhaowei 20170814,打印dsl语句
+    	log.info("es query request:"+query);
+    	log.info("es query body:"+body);
         InputStream scroll = client.execute(POST, query, body).body();
         try {
             return reader.read(scroll);
