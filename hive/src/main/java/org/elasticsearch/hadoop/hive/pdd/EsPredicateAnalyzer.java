@@ -67,6 +67,7 @@ public class EsPredicateAnalyzer {
 		// apply Not Null
 
 		analyzer.addComparisonOp("like");
+		analyzer.addComparisonOp("org.apache.hadoop.hive.ql.udf.generic.GenericUDFFullText");
 
 		analyzer.columnNameList = columnNameList;
 		if (CollectionUtils.isNotEmpty(analyzer.columnNameList)) {

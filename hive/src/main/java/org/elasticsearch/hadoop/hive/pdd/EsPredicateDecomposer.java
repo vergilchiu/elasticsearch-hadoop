@@ -23,7 +23,10 @@ import java.util.List;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.hive.ql.plan.ExprNodeColumnDesc;
+import org.apache.hadoop.hive.ql.plan.ExprNodeConstantDesc;
 import org.apache.hadoop.hive.ql.plan.ExprNodeDesc;
+import org.apache.hadoop.hive.ql.plan.ExprNodeGenericFuncDesc;
 import org.apache.hadoop.hive.ql.udf.generic.GenericUDFOPOr;
 import org.nlpcn.es4sql.Test;
 
@@ -65,7 +68,15 @@ public class EsPredicateDecomposer {
 						where.append(" and");
 					}
 				}
-				where.append(node.getComparisonExpr().getExprString());
+				//处理fulltext函数
+				ExprNodeGenericFuncDesc comparisonExpr = node.getComparisonExpr();
+				if(node.getComparisonOp().equals("org.apache.hadoop.hive.ql.udf.generic.GenericUDFFullText")){
+					ExprNodeColumnDesc col = (ExprNodeColumnDesc)comparisonExpr.getChildren().get(0);
+					ExprNodeConstantDesc constant = (ExprNodeConstantDesc)comparisonExpr.getChildren().get(1);
+					where.append(col.getColumn()).append("='").append(constant.getValue()).append("'");
+					continue;
+				}
+				where.append(comparisonExpr.getExprString());
 			}
 			if (where.length() != 0) {
 				sql.append("where ").append(where);
