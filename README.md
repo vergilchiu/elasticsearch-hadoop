@@ -406,7 +406,7 @@ Elasticsearch-hadoop 5.5.1 修改记录
 |序号|项目|类|方法|行号|修改说明| 
 |---|---|---|---|---|---|  
 |201708-14|-|build.gradle|-|579|增加elasticsearch-sql5|
-|201708-14|-|gradle.properties|-|15|修改hive的版本到2.2.0-SNAPSHOT|
+|201708-14|-|gradle.properties|-|15|修改hive的版本到2.3.0|
 |201708-14|hive|EsPredicateAnalyzer.java|-|-|增加处理es过滤条件部分|
 |201708-14|hive|EsPredicateDecomposer.java|-|-|增加处理es过滤条件部分|
 |201708-14|hive|IndexSearchCondition.java|-|-|增加处理es过滤条件部分|
